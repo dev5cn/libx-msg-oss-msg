@@ -20,6 +20,8 @@
 #include <libx-msg-oss-core.h>
 #include "XmsOssMsg.h"
 #include "mgr/XmsgImMgrNeNetLoad.h"
+#include "mgr/XmsgImMgrNeXscServerQuery.h"
+#include "mgr/XmsgImMgrNeXscWorkerCount.h"
 #include "msg/XmsgOssDownloadSimple.h"
 #include "msg/XmsgOssUploadSimple.h"
 #include "msg/XmsgOssUsrObjInfoQuery.h"
@@ -39,6 +41,8 @@ void XmsOssMsg::init(shared_ptr<XmsgImN2HMsgMgr> priMsgMgr)
 	X_MSG_N2H_PRPC_BEFOR_AUTH(priMsgMgr, XmsgNeAuthReq, XmsgNeAuthRsp, XmsgNeAuth::handle)
 	X_MSG_N2H_PRPC_AFTER_AUTH(priMsgMgr, XmsgOssInfoQueryReq, XmsgOssInfoQueryRsp, XmsgOssInfoQuery::handle)
 	X_MSG_N2H_PRPC_AFTER_AUTH(priMsgMgr, XmsgImMgrNeNetLoadReq, XmsgImMgrNeNetLoadRsp, XmsgImMgrNeNetLoad::handle)
+	X_MSG_N2H_PRPC_AFTER_AUTH(priMsgMgr, XmsgImMgrNeXscServerQueryReq, XmsgImMgrNeXscServerQueryRsp, XmsgImMgrNeXscServerQuery::handle)
+	X_MSG_N2H_PRPC_AFTER_AUTH(priMsgMgr, XmsgImMgrNeXscWorkerCountReq, XmsgImMgrNeXscWorkerCountRsp, XmsgImMgrNeXscWorkerCount::handle)
 }
 
 XmsOssMsg::~XmsOssMsg()

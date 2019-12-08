@@ -17,20 +17,25 @@
   along with X-MSG-IM.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MSG_MGR_XMSGIMMGRNENETLOAD_H_
-#define MSG_MGR_XMSGIMMGRNENETLOAD_H_
+#include "XmsgImMgrNeXscServerQuery.h"
 
-#include <libx-msg-common-dat-struct-cpp.h>
-
-class XmsgImMgrNeNetLoad
+XmsgImMgrNeXscServerQuery::XmsgImMgrNeXscServerQuery()
 {
-public:
-	static void handle(shared_ptr<XmsgNeUsr> nu, SptrXitp trans, shared_ptr<XmsgImMgrNeNetLoadReq> req); 
-private:
-	static void handle4all(shared_ptr<XmsgNeUsr> nu, SptrXitp trans, shared_ptr<XmsgImMgrNeNetLoadReq> req, shared_ptr<XscServer> server); 
-	static void handle4worker(shared_ptr<XmsgNeUsr> nu, SptrXitp trans, shared_ptr<XmsgImMgrNeNetLoadReq> req, shared_ptr<XscServer> server); 
-	XmsgImMgrNeNetLoad();
-	virtual ~XmsgImMgrNeNetLoad();
-};
 
-#endif 
+}
+
+void XmsgImMgrNeXscServerQuery::handle(shared_ptr<XmsgNeUsr> nu, SptrXitp trans, shared_ptr<XmsgImMgrNeXscServerQueryReq> req)
+{
+	shared_ptr<XmsgImMgrNeXscServerQueryRsp> rsp(new XmsgImMgrNeXscServerQueryRsp());
+	list<string> lis;
+	XscServer::names(lis);
+	for (auto& it : lis)
+		rsp->add_name(it);
+	trans->end(rsp);
+}
+
+XmsgImMgrNeXscServerQuery::~XmsgImMgrNeXscServerQuery()
+{
+
+}
+

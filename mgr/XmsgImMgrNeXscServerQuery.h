@@ -17,20 +17,18 @@
   along with X-MSG-IM.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef MSG_MGR_XMSGIMMGRNENETLOAD_H_
-#define MSG_MGR_XMSGIMMGRNENETLOAD_H_
+#ifndef MGR_XMSGIMMGRNEXSCSERVERQUERY_H_
+#define MGR_XMSGIMMGRNEXSCSERVERQUERY_H_
 
 #include <libx-msg-common-dat-struct-cpp.h>
 
-class XmsgImMgrNeNetLoad
+class XmsgImMgrNeXscServerQuery
 {
 public:
-	static void handle(shared_ptr<XmsgNeUsr> nu, SptrXitp trans, shared_ptr<XmsgImMgrNeNetLoadReq> req); 
+	static void handle(shared_ptr<XmsgNeUsr> nu, SptrXitp trans, shared_ptr<XmsgImMgrNeXscServerQueryReq> req); 
 private:
-	static void handle4all(shared_ptr<XmsgNeUsr> nu, SptrXitp trans, shared_ptr<XmsgImMgrNeNetLoadReq> req, shared_ptr<XscServer> server); 
-	static void handle4worker(shared_ptr<XmsgNeUsr> nu, SptrXitp trans, shared_ptr<XmsgImMgrNeNetLoadReq> req, shared_ptr<XscServer> server); 
-	XmsgImMgrNeNetLoad();
-	virtual ~XmsgImMgrNeNetLoad();
+	XmsgImMgrNeXscServerQuery();
+	virtual ~XmsgImMgrNeXscServerQuery();
 };
 
 #endif 

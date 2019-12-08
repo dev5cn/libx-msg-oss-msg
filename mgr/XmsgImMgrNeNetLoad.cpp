@@ -26,8 +26,57 @@ XmsgImMgrNeNetLoad::XmsgImMgrNeNetLoad()
 
 void XmsgImMgrNeNetLoad::handle(shared_ptr<XmsgNeUsr> nu, SptrXitp trans, shared_ptr<XmsgImMgrNeNetLoadReq> req)
 {
+	if (req->name().empty())
+	{
+		trans->endDesc(RET_FORMAT_ERROR, "xsc-server name can not be null");
+		return;
+	}
+	auto server = XscServer::get(req->name());
+	if (server == nullptr)
+	{
+		trans->endDesc(RET_FORBIDDEN, "can not found xsc-server for name: %s", req->name().c_str());
+		return;
+	}
+	if (req->indx() == 0xFFFFFFFF)
+	{
+		XmsgImMgrNeNetLoad::handle4all(nu, trans, req, server);
+		return;
+	}
+	XmsgImMgrNeNetLoad::handle4worker(nu, trans, req, server);
+}
+
+void XmsgImMgrNeNetLoad::handle4all(shared_ptr<XmsgNeUsr> nu, SptrXitp trans, shared_ptr<XmsgImMgrNeNetLoadReq> req, shared_ptr<XscServer> server)
+{
 	shared_ptr<XmsgImMgrNeNetLoadRsp> rsp(new XmsgImMgrNeNetLoadRsp());
-	XmsgMisc::insertKv(rsp->mutable_kv(), "tx", "1000");
+	rsp->Clear();
+	for (size_t i = 0; i < server->xscWorker.size(); ++i)
+	{
+		auto stat = server->xscWorker.at(i)->stat;
+		rsp->set_rxbytes(rsp->rxbytes() + stat->get(XscWorkerStatItem::XSC_WORKER_RX_BYTES));
+		rsp->set_rxmsgs(rsp->rxmsgs() + stat->get(XscWorkerStatItem::XSC_WORKER_RX_MSGS));
+		rsp->set_txbytes(rsp->txbytes() + stat->get(XscWorkerStatItem::XSC_WORKER_RX_MSGS));
+		rsp->set_txmsgs(rsp->txmsgs() + stat->get(XscWorkerStatItem::XSC_WORKER_TX_MSGS));
+		rsp->set_n2htotal(rsp->n2htotal() + stat->get(XscWorkerStatItem::XSC_WORKER_N2H_TOTAL));
+		rsp->set_n2hdestory(rsp->n2hdestory() + stat->get(XscWorkerStatItem::XSC_WORKER_N2H_DESTORY));
+	}
+	trans->end(rsp);
+}
+
+void XmsgImMgrNeNetLoad::handle4worker(shared_ptr<XmsgNeUsr> nu, SptrXitp trans, shared_ptr<XmsgImMgrNeNetLoadReq> req, shared_ptr<XscServer> server)
+{
+	if (req->indx() >= server->xscWorker.size())
+	{
+		trans->endDesc(RET_FORBIDDEN, "over the xsc-worker index");
+		return;
+	}
+	shared_ptr<XmsgImMgrNeNetLoadRsp> rsp(new XmsgImMgrNeNetLoadRsp());
+	auto stat = server->xscWorker.at(req->indx())->stat;
+	rsp->set_rxbytes(stat->get(XscWorkerStatItem::XSC_WORKER_RX_BYTES));
+	rsp->set_rxmsgs(stat->get(XscWorkerStatItem::XSC_WORKER_RX_MSGS));
+	rsp->set_txbytes(stat->get(XscWorkerStatItem::XSC_WORKER_RX_MSGS));
+	rsp->set_txmsgs(stat->get(XscWorkerStatItem::XSC_WORKER_TX_MSGS));
+	rsp->set_n2htotal(stat->get(XscWorkerStatItem::XSC_WORKER_N2H_TOTAL));
+	rsp->set_n2hdestory(stat->get(XscWorkerStatItem::XSC_WORKER_N2H_DESTORY));
 	trans->end(rsp);
 }
 
